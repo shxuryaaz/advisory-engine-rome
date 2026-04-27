@@ -1,0 +1,71 @@
+@api = http://localhost:8000
+@user_id = 00000000-0000-0000-0000-000000000001
+
+### Health
+GET {{api}}/health
+
+### Seed profile goals and constraints
+PUT {{api}}/profile/{{user_id}}
+Content-Type: application/json
+
+{
+  "name": "Default User",
+  "goals": [
+    {
+      "title": "Build durable income",
+      "description": "Prioritize decisions that compound career and business upside.",
+      "weight": 0.7
+    },
+    {
+      "title": "Protect health",
+      "description": "Avoid choices that destroy sleep, energy, or consistency.",
+      "weight": 0.3
+    }
+  ],
+  "constraints": {
+    "time_per_day": 3,
+    "budget": 1200,
+    "energy_level": 0.65
+  }
+}
+
+### Request a decision
+POST {{api}}/decision
+Content-Type: application/json
+
+{
+  "user_id": "{{user_id}}",
+  "decision": "Should I launch a paid AI advisory product this month or keep consulting privately?",
+  "options": [
+    {
+      "id": "launch-product",
+      "label": "Launch paid AI advisory product",
+      "description": "Ship a narrow paid offer and test demand publicly.",
+      "estimated_time": 2.5,
+      "estimated_cost": 500,
+      "expected_value": 0.82
+    },
+    {
+      "id": "private-consulting",
+      "label": "Keep consulting privately",
+      "description": "Focus on one-on-one consulting and defer productization.",
+      "estimated_time": 3,
+      "estimated_cost": 100,
+      "expected_value": 0.62
+    }
+  ]
+}
+
+### Submit feedback after acting on a decision
+POST {{api}}/feedback
+Content-Type: application/json
+
+{
+  "decision_id": "replace-with-decision-id",
+  "outcome_summary": "The launch generated two qualified leads and exposed onboarding friction.",
+  "success_score": 0.76,
+  "reflection": "Public launch created useful pressure, but scope needed tighter constraints."
+}
+
+### Retrieve relevant memory
+GET {{api}}/memory?user_id={{user_id}}&query=launch%20paid%20AI%20product&top_k=5
